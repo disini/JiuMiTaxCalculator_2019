@@ -11,27 +11,32 @@ package
 	import flash.ui.ContextMenuItem;
 	
 	/**
-	 * 
+	 * 五险一金个税计算器
 	 * @author LiuSheng  QQ:532230294
 	 * 创建时间 : 2017-3-15 下午4:22:02
 	 *
 	 */
 	public class JiuMiTaxCalculator extends Calculator_Clip
 	{
-		public static const VERSION_DESC:String="五险一金个税计算器-2017版V1.0.0";
+		public static const NAME_DESC:String="五险一金个税计算器-2019版";
+		public static const VERSION_DESC:String="V1.1.0-2018100901";
 		public static const SITE_DESC:String="访问官网";
 		public static const SITE_URL:String="http://blog.csdn.net/jinshelj";
-		public static const CEILING_NUMBER:Number = 21258;
-		public static const BOTTOM_NUMBER:Number = 2835;
+		/** 社保公积金缴存基数上限 */
+		public static const CEILING_NUMBER:Number = 25401;
+		/** 社保公积金缴存基数下限 */
+		public static const BOTTOM_NUMBER:Number = 3387;// http://news.vobao.com/zhuanti/916670994362186006.shtml?VobaoCacheRefresh
 		private var _alertPanel1:AlertPanel1 = new AlertPanel1();
 		private var _alertPanel2:AlertPanel2 = new AlertPanel2();
 		
+		private var nameMenu:ContextMenuItem;
 		private var versionMenu:ContextMenuItem;
 		private var siteMenu:ContextMenuItem;
 		private var menu:ContextMenu=new ContextMenu();
 		
 		private var  _taxRateArr:Array = [3, 10, 20, 25, 30, 35, 45];
-		private var  _rapidDeductionArr:Array = [0, 105, 555, 1005, 2755, 5505, 13505];
+//		private var  _rapidDeductionArr:Array = [0, 105, 555, 1005, 2755, 5505, 13505];// 2011.4月起
+		private var  _rapidDeductionArr:Array = [0, 210, 1410, 2660, 4410, 7160, 15160];// 2018.10月起
 		
 		/** 税前月收入 */
 		private var _originSalary:Number;
@@ -108,7 +113,8 @@ package
 		/** 封顶数*/
 		private var _ceilingNumber:Number;
 		/** 个税起征点 */
-		private var _taxExemptionThreshold:Number;
+//		private var _taxExemptionThreshold:Number = 3500;// 2011.4月起
+		private var _taxExemptionThreshold:Number = 5000;// 2018.10月起
 		
 		public function JiuMiTaxCalculator()
 		{
@@ -147,11 +153,12 @@ package
 		private function initContextMenu():void
 		{
 			// TODO Auto Generated method stub
+			nameMenu=new ContextMenuItem(NAME_DESC);
 			versionMenu=new ContextMenuItem(VERSION_DESC);
 			siteMenu = new ContextMenuItem(SITE_DESC);
 			siteMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, menuItem_click);
 			menu.hideBuiltInItems();
-			menu.customItems.push(versionMenu, siteMenu);
+			menu.customItems.push(nameMenu, versionMenu, siteMenu);
 			this.contextMenu=menu;
 		}
 		
@@ -179,7 +186,8 @@ package
 		{
 			// TODO Auto Generated method stub
 			calc_Btn.addEventListener(MouseEvent.CLICK, onCalculateHandler);
-			reverseCalc_Btn.addEventListener(MouseEvent.CLICK, onReverseCalculateHandler);
+			reverseCalc_Btn.visible = false;
+//			reverseCalc_Btn.addEventListener(MouseEvent.CLICK, onReverseCalculateHandler);
 			reset_Btn.addEventListener(MouseEvent.CLICK, onResetHandler);
 		}
 		
@@ -299,7 +307,7 @@ package
 			_selfAffordPension = (_insuranceBase * _selfAffordPensionRate / 100);
 			selfAffordPension_txt.text = formatStr1(_selfAffordPension);
 			// 医疗（个人）
-			_selfAffordMedical = _insuranceBase > 0 ?(_insuranceBase * _selfAffordMedicalRate / 100) + 3 : 0;
+			_selfAffordMedical = _insuranceBase > 0 ?(_insuranceBase * _selfAffordMedicalRate / 100) + 3 : 0;// 3块钱的大病医疗
 			selfAffordMedical_txt.text = formatStr1(_selfAffordMedical);
 			// 失业（个人）
 			_selfAffordEmploymentInsurance = (_insuranceBase * _selfAffordEmploymentInsuranceRate / 100);
@@ -396,31 +404,35 @@ package
 		{
 			// TODO Auto Generated method stub
 			var curStage:int;
-			if(salaryTocalc > 0 && salaryTocalc <= 1500)
+//			if(salaryTocalc > 0 && salaryTocalc <= 1500)// 2011.4月起
+			if(salaryTocalc > 0 && salaryTocalc <= 3000)// 2018.10月起
 			{
 				curStage = 0;
 			}
-			else if(salaryTocalc > 1500 && salaryTocalc <= 4500)
+//			else if(salaryTocalc > 1500 && salaryTocalc <= 4500)// 2011.4月起
+			else if(salaryTocalc > 3000 && salaryTocalc <= 12000)// 2018.10月起
 			{
 				curStage = 1;
 			}
-			else if(salaryTocalc > 4500 && salaryTocalc <= 9000)
+//			else if(salaryTocalc > 4500 && salaryTocalc <= 9000)// 2011.4月起
+			else if(salaryTocalc > 12000 && salaryTocalc <= 25000)// 2018.10月起
 			{
 				curStage = 2;
 			}
-			else if(salaryTocalc > 9000 && salaryTocalc <= 35000)
+//			else if(salaryTocalc > 9000 && salaryTocalc <= 35000)// 2011.4月起
+			else if(salaryTocalc > 25000 && salaryTocalc <= 35000)// 2018.10月起
 			{
 				curStage = 3;
 			}
-			else if(salaryTocalc > 35000 && salaryTocalc <= 55000)
+			else if(salaryTocalc > 35000 && salaryTocalc <= 55000)// 2011.4月起, // 2018.10月起没变
 			{
 				curStage = 4;
 			}
-			else if(salaryTocalc > 55000 && salaryTocalc <= 80000)
+			else if(salaryTocalc > 55000 && salaryTocalc <= 80000)// 2011.4月起, // 2018.10月起没变
 			{
 				curStage = 5;
 			}
-			else if(salaryTocalc > 80000)
+			else if(salaryTocalc > 80000)// 2011.4月起, // 2018.10月起没变
 			{
 				curStage = 6;
 			}
