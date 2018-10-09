@@ -20,8 +20,10 @@ package
 	{
 		public static const NAME_DESC:String="五险一金个税计算器-2019版";
 		public static const VERSION_DESC:String="V1.1.0-2018100901";
+		public static const QQ_DESC:String="QQ : 532230294";
 		public static const SITE_DESC:String="访问官网";
 		public static const SITE_URL:String="http://blog.csdn.net/jinshelj";
+		
 		/** 社保公积金缴存基数上限 */
 		public static const CEILING_NUMBER:Number = 25401;
 		/** 社保公积金缴存基数下限 */
@@ -32,6 +34,7 @@ package
 		private var nameMenu:ContextMenuItem;
 		private var versionMenu:ContextMenuItem;
 		private var siteMenu:ContextMenuItem;
+		private var qqMenu:ContextMenuItem;
 		private var menu:ContextMenu=new ContextMenu();
 		
 		private var  _taxRateArr:Array = [3, 10, 20, 25, 30, 35, 45];
@@ -156,9 +159,10 @@ package
 			nameMenu=new ContextMenuItem(NAME_DESC);
 			versionMenu=new ContextMenuItem(VERSION_DESC);
 			siteMenu = new ContextMenuItem(SITE_DESC);
+			qqMenu = new ContextMenuItem(QQ_DESC);
 			siteMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, menuItem_click);
 			menu.hideBuiltInItems();
-			menu.customItems.push(nameMenu, versionMenu, siteMenu);
+			menu.customItems.push(nameMenu, versionMenu, siteMenu, qqMenu);
 			this.contextMenu=menu;
 		}
 		
