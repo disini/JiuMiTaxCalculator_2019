@@ -233,9 +233,24 @@ package
 				
 				commonGetValues();
 				
-				if(Number(insuranceBase_txt.text) != 0)
+				if((Number(insuranceBase_txt.text) != 0) && (Number(reservedFundBase_txt.text) != 0))
 				{
+//					_reservedFundBase = _insuranceBase = _insuranceBase < BOTTOM_NUMBER ? BOTTOM_NUMBER : (_insuranceBase < CEILING_NUMBER ? _insuranceBase : CEILING_NUMBER);
 					_reservedFundBase = _insuranceBase = _insuranceBase < BOTTOM_NUMBER ? BOTTOM_NUMBER : (_insuranceBase < CEILING_NUMBER ? _insuranceBase : CEILING_NUMBER);
+//					_reservedFundBase = _reservedFundBase > _originSalary ? _originSalary : _reservedFundBase;
+//					_insuranceBase = _insuranceBase > _originSalary ? _originSalary : _insuranceBase;
+					
+					if(_reservedFundBase > _originSalary)
+					{
+						_reservedFundBase = _originSalary;
+						reservedFundBase_txt.text = String(_reservedFundBase);
+					}
+					
+					if(_insuranceBase > _originSalary)
+					{
+						_insuranceBase = _originSalary;
+						insuranceBase_txt.text = String(_insuranceBase);
+					}
 				}
 				
 				commonCaculate();
@@ -649,6 +664,9 @@ package
 			
 			_finalSalary = 0;
 			finalSalary_txt.text = "";
+			
+			// ------------------------------------------------------基数和封顶数--------------------------------------------------------------//
+			insuranceBase_txt.text = reservedFundBase_txt.text = ceilingNumber_txt.text = String(CEILING_NUMBER);
 		}
 		
 		private function formatStr1(value:Number):String
